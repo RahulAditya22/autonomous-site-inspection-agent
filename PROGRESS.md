@@ -74,5 +74,13 @@ Step 8 � Safety Gate
 - Inspection results displayed in browser
 - Temporary uploaded test image removed
 
+## Step 12 — Testing
+- Pytest test suite created
+- Low-severity decision tested
+- Medium-severity alert path tested
+- High-severity human-approval path tested
+- Pytest import path configured
+- All 3 automated tests passed
+
 ## Current Step
-Step 12 — Testing
+Step 13 — Documentation
