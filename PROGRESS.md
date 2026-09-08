@@ -59,5 +59,13 @@ Step 8 � Safety Gate
 - Empty alert messages rejected
 - Alerting module import verified
 
+## Step 10 — Agent Orchestration
+- Inspection pipeline connected
+- Perception, decision, and safety modules integrated
+- Low-severity log-only path verified
+- High-severity human-approval path verified
+- Alert decision path verified
+- Temporary test image removed
+
 ## Current Step
-Step 10 — Agent Orchestration
+Step 11 — Flask Dashboard
