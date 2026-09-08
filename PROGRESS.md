@@ -67,5 +67,12 @@ Step 8 � Safety Gate
 - Alert decision path verified
 - Temporary test image removed
 
+## Step 11 — Flask Dashboard
+- Flask dashboard implemented
+- Image upload workflow verified
+- Inspection pipeline connected to web interface
+- Inspection results displayed in browser
+- Temporary uploaded test image removed
+
 ## Current Step
-Step 11 — Flask Dashboard
+Step 12 — Testing

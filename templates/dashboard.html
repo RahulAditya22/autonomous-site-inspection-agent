@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Site Inspection</title>
+</head>
+<body>
+    <h1>Autonomous Site Inspection Agent</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label for="image">Upload aerial inspection image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <button type="submit">Inspect Site</button>
+    </form>
+
+    {% if result %}
+        <h2>Inspection Result</h2>
+
+        <p><strong>Description:</strong> {{ result.description }}</p>
+        <p><strong>Severity:</strong> {{ result.severity }}</p>
+        <p><strong>Action:</strong> {{ result.action }}</p>
+
+        <h3>Safety</h3>
+        <p><strong>Approved:</strong> {{ result.safety.approved }}</p>
+        <p><strong>Human approval required:</strong> {{ result.safety.requires_human }}</p>
+        <p><strong>Reason:</strong> {{ result.safety.reason }}</p>
+    {% endif %}
+</body>
+</html>
