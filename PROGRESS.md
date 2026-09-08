@@ -84,3 +84,13 @@ Step 8 � Safety Gate
 
 ## Current Step
 Step 13 — Documentation
+
+## Step 14 — Deployment
+- Deployment preparation started
+- Generated runtime files confirmed ignored by Git
+- .gitignore updated for pytest cache
+- Mock mode configured to work without an Anthropic API key
+- Application import verified without an API key
+
+## Current Step
+Step 14 — Deployment
