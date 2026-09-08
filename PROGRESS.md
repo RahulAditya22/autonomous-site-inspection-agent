@@ -1,40 +1,40 @@
 # Project Progress
 
-## Step 0 � Environment Setup
+## Step 0 — Environment Setup
 - Project folder created
 - Python virtual environment created and activated
 - Environment verified
 
-## Step 1 � Project Skeleton
+## Step 1 — Project Skeleton
 - Required folders and files created
 - Project structure verified
 
-## Step 2 � Git & GitHub
+## Step 2 — Git & GitHub
 - Git repository initialized
 - Main branch configured
 - GitHub remote connected
 - Initial project pushed to GitHub
 
-## Step 3 � Dependencies
+## Step 3 — Dependencies
 - Required dependencies added to requirements.txt
 - Dependencies installed in virtual environment
 - Installation verified with pip show
 - Dependency changes committed to Git
 
-## Step 4 � Configuration and Environment Variables
+## Step 4 — Configuration and Environment Variables
 - .env.example created
 - config.py created
 - Missing API key validation verified
 - Environment variable loading verified
 - API key kept out of source control
 
-## Step 5 � Database Schema
+## Step 5 — Database Schema
 - SQLAlchemy Inspection model created
 - SQLite database initialized
 - Database file creation verified
 - Database file confirmed ignored by Git
 
-## Step 6 � Vision/Image Perception
+## Step 6 — Vision/Image Perception
 - Image loading verified with Pillow
 - Base64 image encoding verified
 - Anthropic integration implemented as an optional provider
@@ -43,15 +43,20 @@
 - Structured perception output verified
 - Mock mode does not require paid API access
 
-## Step 7 � Decision Module
+## Step 7 — Decision Module
 - Severity validation implemented
-- Severity 1�2 mapped to log_only
-- Severity 3�4 mapped to send_alert
+- Severity 1–2 mapped to log_only
+- Severity 3–4 mapped to send_alert
 - Severity 5 mapped to flag_for_human_approval
 - Invalid severity values tested and rejected
 
-## Current Step
-Step 8 � Safety Gate
+## Step 8 — Safety Gate
+- Safety gate implemented
+- Severity 1–4 autonomous approval verified
+- Severity 5 human approval requirement verified
+- Invalid severity values rejected
+- Invalid severity type rejected
+- Empty action rejected
 
 ## Step 9 — Alerting
 - Slack alerting module implemented
@@ -82,8 +87,17 @@ Step 8 � Safety Gate
 - Pytest import path configured
 - All 3 automated tests passed
 
-## Current Step
-Step 13 — Documentation
+## Step 13 — Documentation
+- README.md created
+- Project architecture documented
+- Technology stack documented
+- Decision rules documented
+- Local setup instructions documented
+- Mock mode documented
+- Optional Anthropic integration documented
+- Optional Slack alerting documented
+- Testing instructions documented
+- Safety mechanism documented
 
 ## Step 14 — Deployment
 - Deployment preparation started
@@ -91,6 +105,9 @@ Step 13 — Documentation
 - .gitignore updated for pytest cache
 - Mock mode configured to work without an Anthropic API key
 - Application import verified without an API key
+- Flask configured to use the deployment PORT environment variable
+- Deployment port behavior verified
+- Local default port verified as 5000
 
 ## Current Step
 Step 14 — Deployment
