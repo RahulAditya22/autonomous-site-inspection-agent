@@ -1,71 +1,97 @@
-# AegisFleet
+# AeroGuard
 
-**AI Drone Mission Planner & Autonomous Inspection Simulator**
+**AI-Assisted Aerial Site Inspection & Automated Incident Response**
 
-AegisFleet is a local-first agentic inspection platform for demonstrating autonomous mission planning, simulated UAV execution, pixel-based perception, deterministic risk scoring, RAG, persistent mission memory, safety gates, replanning, and operational observability.
+AeroGuard turns aerial/site images into structured safety observations and deterministic operational actions. It is intentionally hardware-independent: images can come from a drone, satellite source, inspection archive, or public dataset.
+
+## What it demonstrates
+
+- Computer-vision API integration with Google Gemini
+- Image validation and Base64 transport
+- Strict structured JSON validation
+- Confidence-aware decision making
+- Deterministic incident/action policy
+- CSV + JSON persistence
+- Optional webhook alerting
+- Environment-based secret management
+- Automated unit tests
 
 ## Architecture
 
-Mission Agent → Planning Agent → `DroneController` → Perception Agent → Risk Engine → Safety Agent + RAG → Mission Memory → Dashboard.
+```text
+Aerial Image
+     |
+     v
+Image Validation
+     |
+     v
+Gemini Vision Adapter
+     |
+     v
+Structured JSON Validation
+     |
+     v
+Incident / Severity Policy
+     |------------------|
+     v                  v
+CSV + JSON Log       Webhook Alert
+```
 
-Deterministic calculations handle distance, battery, feasibility and safety. No paid API is required. The simulated controller is the hardware seam for a future MAVLink/PX4/ArduPilot adapter.
+The AI proposes an observation. Python validates the response and makes the operational decision. This separation prevents an LLM response from directly controlling the application.
 
-## Local setup — Windows PowerShell
+## Recommended free model
+
+**Google Gemini 2.5 Flash** is the recommended model for this project because it supports image input and structured generation and is practical for a small student project when used within Google's current free-tier limits. Free-tier availability and quotas can change, so check Google's current Gemini API pricing/quota page before use.
+
+## Setup — Windows PowerShell
 
 ```powershell
-cd aegisfleet
 python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r backend\requirements.txt
-copy .env.example .env
-python scripts\setup.py
-cd frontend
-npm install
+.venv\\Scripts\\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-Start backend from the repository root:
+### Add your API key
+
+Open `.env`. **Fill the blank value on line 2:**
+
+```text
+GEMINI_API_KEY=""
+```
+
+Replace only the empty quotes with your Gemini API key. Do not commit `.env` to GitHub; it is ignored by `.gitignore`.
+
+Optional webhook: fill `ALERT_WEBHOOK_URL` on line 5 if you want alerts. It may remain blank.
+
+## Run
+
+Put an aerial image anywhere on your machine and run:
 
 ```powershell
-python backend\run.py
+$env:PYTHONPATH="backend"
+python backend/run.py path\to\image.jpg
 ```
 
-In a second terminal:
-
-```powershell
-cd frontend
-npm run dev
-```
-
-Open `http://127.0.0.1:5173`.
-
-## Demo
-
-Click **Run deterministic demo**. The real API creates a mission, the simulator moves D-01, image pixels pass through the local detector, events are persisted, risk/safety rules execute, and battery degradation after the second waypoint forces a feasibility check and return-home replan.
-
-If the optional YOLO weights are unavailable, the perception component explicitly reports that visual claims are unavailable; it never fabricates detections.
-
-## AI and data policy
-
-The application uses a lightweight YOLO11n model pretrained on COCO for general object detection. COCO is not bundled. Site-specific hazards such as smoke, fire, structural anomalies, PPE compliance and trenches require an appropriately licensed and evaluated dataset/model before being claimed as detected. See `docs/dataset.md`.
-
-The local RAG corpus in `data/knowledge/` contains operating, site-safety, emergency and inspection procedures. Mission history is stored in SQLite and searchable through `/api/memory/query`.
-
-## Safety
-
-Severity is deterministic. Battery and communication hard constraints can override agent recommendations. Critical observations require a human approval gate. LLMs cannot bypass these constraints.
+The inspection result is printed to the terminal and saved under `data/output/`.
 
 ## Tests
 
-Backend: `pytest`
+The test suite does not require an API key and does not make network calls:
 
-Frontend: `cd frontend; npm test`
+```powershell
+$env:PYTHONPATH="backend"
+pytest -q
+```
 
-A local offline environment was used to run the framework-independent backend unit/integration contract tests: **9 passed**. Full Flask API and frontend execution require installing their declared dependencies; this build environment had no package-index network access, so those dependency-backed suites were not falsely reported as executed.
+## Output
 
-## API
+`data/output/incidents.csv` contains an append-only incident history. `data/output/latest_incident.json` contains the latest result.
 
-See `docs/api.md`. Important routes include missions, telemetry, demo execution, safety approval, RAG retrieval, memory queries, reports and image analysis.
+## Important limitation
 
-## Limitations
+AeroGuard is an AI-assisted inspection/triage tool, not a certified safety system. It does not establish that a person is actually trespassing or that an observed object is dangerous. Real deployment requires validated site-specific datasets, human review, access-control integration, and appropriate safety testing.
 
-This is not aerodynamic simulation or flight-control validation. YOLO11n/COCO is not a certified construction inspection model. The demo fixtures are pipeline fixtures, not model benchmark evidence.
+## Resume description
+
+> Built an AI-assisted aerial site inspection pipeline using Python and Gemini vision, implementing structured JSON validation, confidence-aware threat classification, deterministic incident-response rules, persistent event logging, optional webhook alerts, environment-based secret management, and automated tests.
