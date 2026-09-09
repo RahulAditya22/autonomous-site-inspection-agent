@@ -4,27 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autonomous Site Inspection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-    <h1>Autonomous Site Inspection Agent</h1>
+    <main class="container">
 
-    <form method="POST" enctype="multipart/form-data">
-        <label for="image">Upload aerial inspection image:</label>
-        <input type="file" id="image" name="image" accept="image/*" required>
-        <button type="submit">Inspect Site</button>
-    </form>
+        <header class="header">
+            <div class="eyebrow">AI OPERATIONS</div>
+            <h1>Autonomous Site Inspection</h1>
+            <p class="subtitle">
+                Analyze aerial imagery, detect potential anomalies,
+                and route inspection decisions through an automated
+                safety gate.
+            </p>
+        </header>
 
-    {% if result %}
-        <h2>Inspection Result</h2>
+        <section class="upload-card">
+            <h2>Run an Inspection</h2>
+            <p class="subtitle">
+                Upload an aerial inspection image to start the analysis.
+            </p>
 
-        <p><strong>Description:</strong> {{ result.description }}</p>
-        <p><strong>Severity:</strong> {{ result.severity }}</p>
-        <p><strong>Action:</strong> {{ result.action }}</p>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="upload-row">
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/*"
+                        required
+                    >
 
-        <h3>Safety</h3>
-        <p><strong>Approved:</strong> {{ result.safety.approved }}</p>
-        <p><strong>Human approval required:</strong> {{ result.safety.requires_human }}</p>
-        <p><strong>Reason:</strong> {{ result.safety.reason }}</p>
-    {% endif %}
+                    <button type="submit">
+                        Run Inspection
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        {% if result %}
+        <section class="results">
+
+            <div class="eyebrow">INSPECTION COMPLETE</div>
+            <h2>Inspection Result</h2>
+
+            <div class="cards">
+
+                <div class="card">
+                    <div class="card-label">Severity</div>
+                    <div class="card-value">
+                        {{ result.severity }} / 5
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-label">Recommended Action</div>
+                    <div class="card-value">
+                        {{ result.action }}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-label">Safety Status</div>
+
+                    {% if result.safety.requires_human %}
+                        <span class="status status-danger">
+                            Human Approval Required
+                        </span>
+                    {% else %}
+                        <span class="status status-success">
+                            Approved
+                        </span>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="description">
+                <div class="card-label">Perception</div>
+                <p>{{ result.description }}</p>
+            </div>
+
+            <div class="safety
+                {% if result.safety.requires_human %}
+                    safety-pending
+                {% else %}
+                    safety-approved
+                {% endif %}
+            ">
+                <div class="card-label">Safety Gate</div>
+
+                <p>
+                    <strong>Approved:</strong>
+                    {{ result.safety.approved }}
+                </p>
+
+                <p>
+                    <strong>Human approval required:</strong>
+                    {{ result.safety.requires_human }}
+                </p>
+
+                <p>
+                    <strong>Reason:</strong>
+                    {{ result.safety.reason }}
+                </p>
+            </div>
+
+        </section>
+        {% endif %}
+
+        <footer class="footer">
+            Autonomous Site Inspection Agent ·
+            Human-in-the-loop safety architecture
+        </footer>
+
+    </main>
 </body>
 </html>
