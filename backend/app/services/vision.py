@@ -2,6 +2,7 @@
 
 import base64
 import json
+import mimetypes
 
 import requests
 from PIL import Image
@@ -34,8 +35,12 @@ class GeminiVisionClient:
         if not self.api_key:
             raise RuntimeError("GEMINI_API_KEY is blank. Add your key to .env before API inspection.")
 
-        with Image.open(image_path) as image:
-            image.verify()
+        image_path_obj = Image.open(image_path)
+        image_path_obj.verify()
+        mime_type, _ = mimetypes.guess_type(image_path)
+        if mime_type not in {"image/jpeg", "image/png", "image/webp"}:
+            raise ValueError("Supported image types are JPEG, PNG, and WebP")
+
         with open(image_path, "rb") as image_file:
             encoded = base64.b64encode(image_file.read()).decode("ascii")
 
@@ -46,7 +51,7 @@ class GeminiVisionClient:
         payload = {
             "contents": [{"parts": [
                 {"text": PROMPT},
-                {"inline_data": {"mime_type": "image/jpeg", "data": encoded}},
+                {"inline_data": {"mime_type": mime_type, "data": encoded}},
             ]}],
             "generationConfig": {"temperature": 0.0, "responseMimeType": "application/json"},
         }
