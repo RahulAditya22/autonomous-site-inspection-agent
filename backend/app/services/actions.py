@@ -20,11 +20,13 @@ def decide_action(result: dict[str, Any], confidence_threshold: float = 0.65) ->
     return ACTIONS[result["severity"]]
 
 
-def save_incident(result: dict[str, Any], output_dir: Path) -> Path:
+def save_incident(
+    result: dict[str, Any], output_dir: Path, confidence_threshold: float = 0.65
+) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     path = output_dir / "incidents.csv"
     row = dict(result)
-    row["automated_action"] = decide_action(result)
+    row["automated_action"] = decide_action(result, confidence_threshold)
     fields = list(row.keys())
     write_header = not path.exists()
     with path.open("a", newline="", encoding="utf-8") as handle:
