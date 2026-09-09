@@ -1,7 +1,0 @@
-flask
-python-dotenv
-anthropic
-pillow
-sqlalchemy
-requests
-pytest

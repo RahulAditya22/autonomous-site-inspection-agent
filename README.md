@@ -1,130 +1,71 @@
-# Autonomous Site Inspection Agent
+# AegisFleet
 
-An agent that analyzes aerial imagery, reasons about anomalies, and decides whether to log an inspection, send an alert, or require human approval for high-severity findings.
+**AI Drone Mission Planner & Autonomous Inspection Simulator**
 
-## Project Architecture
+AegisFleet is a local-first agentic inspection platform for demonstrating autonomous mission planning, simulated UAV execution, pixel-based perception, deterministic risk scoring, RAG, persistent mission memory, safety gates, replanning, and operational observability.
 
-Image Upload
-    |
-    v
-Perception
-    |
-    v
-Severity
-    |
-    v
-Decision
-    |
-    +------------------+
-    |                  |
-    v                  v
-log_only          send_alert
-    |                  |
-    |                  v
-    |             Slack Alert
-    |
-    v
-Safety Gate
-    |
-    v
-Human Approval Required
-for Severity 5
+## Architecture
 
-## Tech Stack
+Mission Agent → Planning Agent → `DroneController` → Perception Agent → Risk Engine → Safety Agent + RAG → Mission Memory → Dashboard.
 
-- Python
-- Flask
-- Pillow
-- Anthropic Claude API (optional)
-- SQLite / SQLAlchemy
-- python-dotenv
-- Requests
-- Pytest
-- Git / GitHub
+Deterministic calculations handle distance, battery, feasibility and safety. No paid API is required. The simulated controller is the hardware seam for a future MAVLink/PX4/ArduPilot adapter.
 
-## Decision Rules
+## Local setup — Windows PowerShell
 
-| Severity | Action |
-|---|---|
-| 1-2 | log_only |
-| 3-4 | send_alert |
-| 5 | flag_for_human_approval |
+```powershell
+cd aegisfleet
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
+copy .env.example .env
+python scripts\setup.py
+cd frontend
+npm install
+```
 
-Severity 5 findings cannot be autonomously approved by the safety gate.
+Start backend from the repository root:
 
-## Running the Project
+```powershell
+python backend\run.py
+```
 
-### 1. Activate the virtual environment
+In a second terminal:
 
-PowerShell:
+```powershell
+cd frontend
+npm run dev
+```
 
-    .\venv\Scripts\Activate.ps1
+Open `http://127.0.0.1:5173`.
 
-### 2. Install dependencies
+## Demo
 
-    pip install -r requirements.txt
+Click **Run deterministic demo**. The real API creates a mission, the simulator moves D-01, image pixels pass through the local detector, events are persisted, risk/safety rules execute, and battery degradation after the second waypoint forces a feasibility check and return-home replan.
 
-### 3. Configure environment variables
+If the optional YOLO weights are unavailable, the perception component explicitly reports that visual claims are unavailable; it never fabricates detections.
 
-For the free local demo, use mock perception:
+## AI and data policy
 
-    mock="mock"
+The application uses a lightweight YOLO11n model pretrained on COCO for general object detection. COCO is not bundled. Site-specific hazards such as smoke, fire, structural anomalies, PPE compliance and trenches require an appropriately licensed and evaluated dataset/model before being claimed as detected. See `docs/dataset.md`.
 
-Mock mode does not call the Anthropic API and does not require paid API access.
-
-### 4. Run the Flask application
-
-    python app.py
-
-Open http://127.0.0.1:5000 in your browser.
-
-Upload an image and click Inspect Site.
-
-## Anthropic Vision Mode
-
-The project also contains an optional Anthropic vision integration.
-
-Set:
-
-    mock="anthropic"
-
-Then configure ANTHROPIC_API_KEY in your local environment.
-
-This mode requires an Anthropic account with available API credits.
-
-## Slack Alerts
-
-Slack alerting is optional.
-
-Configure SLACK_WEBHOOK_URL if you want to send alerts to Slack.
-
-If no Slack webhook is configured, the application safely reports that the alert was not sent.
-
-## Testing
-
-Run:
-
-    pytest
-
-The automated test suite verifies:
-
-- Low-severity log-only decisions
-- Medium-severity alert decisions
-- High-severity human-approval decisions
+The local RAG corpus in `data/knowledge/` contains operating, site-safety, emergency and inspection procedures. Mission history is stored in SQLite and searchable through `/api/memory/query`.
 
 ## Safety
 
-The agent does not autonomously approve severity 5 findings.
+Severity is deterministic. Battery and communication hard constraints can override agent recommendations. Critical observations require a human approval gate. LLMs cannot bypass these constraints.
 
-For severity 5, the safety gate returns:
+## Tests
 
-    approved = False
-    requires_human = True
+Backend: `pytest`
 
-This provides a human-in-the-loop safety mechanism for high-impact decisions.
+Frontend: `cd frontend; npm test`
 
-## Project Status
+A local offline environment was used to run the framework-independent backend unit/integration contract tests: **9 passed**. Full Flask API and frontend execution require installing their declared dependencies; this build environment had no package-index network access, so those dependency-backed suites were not falsely reported as executed.
 
-The project is being developed step by step with verification after each stage.
+## API
 
-See PROGRESS.md for the current implementation progress.
+See `docs/api.md`. Important routes include missions, telemetry, demo execution, safety approval, RAG retrieval, memory queries, reports and image analysis.
+
+## Limitations
+
+This is not aerodynamic simulation or flight-control validation. YOLO11n/COCO is not a certified construction inspection model. The demo fixtures are pipeline fixtures, not model benchmark evidence.
